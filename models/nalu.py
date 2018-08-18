@@ -1,5 +1,6 @@
 import torch
 from torch import nn as nn
+from models.nac import NAC
 
 
 class NALU(nn.Module):
