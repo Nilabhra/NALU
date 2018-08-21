@@ -66,9 +66,8 @@ def train(model, criterion, opt, train_data, train_targets,
     for epoch in range(1, num_epochs + 1):
         model.train()
         total = int(np.ceil(train_data.shape[0]/batch_size))
-        with tqdm(total=total,
-                           desc="Epoch: {}".format(epoch),
-                           leave=False) as prog_bar:
+        with tqdm(total=total, desc="Epoch: {}".format(epoch),
+                  leave=False) as prog_bar:
 
             for x, y in get_batches(train_data, train_targets, batch_size,
                                     mode='train', use_gpu=use_gpu):
@@ -79,22 +78,21 @@ def train(model, criterion, opt, train_data, train_targets,
                 optimizer.step()
                 running_loss += loss.item()
                 running_batch += 1
-                prog_bar.set_description_str('Training loss after {} batches: {:.3f}'.format(
-                            running_batch, running_loss/running_batch))
+                prog_bar.set_description_str('[Epoch: {}] Training loss after {} batches: {:.3f}'.format(
+                            epoch, running_batch, running_loss/running_batch))
                 prog_bar.update(1)
+                
         valid_loss = get_eval_loss(model, criterion, valid_data,
                                    valid_targets, batch_size, False)
-#         tqdm.write("Validation loss after epoch {}: {}".format(epoch, valid_loss))
         if valid_loss < min_loss:
             min_loss = valid_loss
-#             tqdm.write('Validation loss improved! Saving model.')
             with open(checkpoint, 'wb') as f:
                 torch.save(model.state_dict(), f)
                 running_patience = patience
         else:
             running_patience -= 1
         if running_patience == 0:
-            tqdm.write('Ran out of patience, early stopping employed!')
+            # Ran out of patience, early stopping employed!'
             break
     model.load_state_dict(torch.load(checkpoint))
     return model
