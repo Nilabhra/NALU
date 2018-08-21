@@ -1,5 +1,6 @@
 import numpy as np
 import torch
+from tqdm import tqdm
 
 
 def get_batches(data, target, batch_size,
@@ -48,3 +49,52 @@ def get_eval_preds(model, data, targets,
         model_preds = torch.cat(model_preds, dim=0)
         tensor_targets = torch.cat(tensor_targets, dim=0)
     return model_preds, tensor_targets
+
+
+def train(model, criterion, opt, train_data, train_targets,
+          valid_data, valid_targets, patience=15, batch_size=32,
+          num_epochs=10000, checkpoint='best_model.sav'):
+    running_patience = patience
+    running_batch = 0
+    running_loss = 0
+    min_loss = float('inf')
+    use_gpu = torch.cuda.is_available()
+    if use_gpu:
+        model = model.cuda()
+    optimizer = opt(model.parameters())
+    
+    for epoch in range(1, num_epochs + 1):
+        model.train()
+        total = int(np.ceil(train_data.shape[0]/batch_size))
+        with tqdm(total=total,
+                           desc="Epoch: {}".format(epoch),
+                           leave=False) as prog_bar:
+
+            for x, y in get_batches(train_data, train_targets, batch_size,
+                                    mode='train', use_gpu=use_gpu):
+                output = model(x)
+                loss = criterion(output, y)
+                optimizer.zero_grad()
+                loss.backward()
+                optimizer.step()
+                running_loss += loss.item()
+                running_batch += 1
+                prog_bar.set_description_str('Training loss after {} batches: {:.3f}'.format(
+                            running_batch, running_loss/running_batch))
+                prog_bar.update(1)
+        valid_loss = get_eval_loss(model, criterion, valid_data,
+                                   valid_targets, batch_size, False)
+#         tqdm.write("Validation loss after epoch {}: {}".format(epoch, valid_loss))
+        if valid_loss < min_loss:
+            min_loss = valid_loss
+#             tqdm.write('Validation loss improved! Saving model.')
+            with open(checkpoint, 'wb') as f:
+                torch.save(model.state_dict(), f)
+                running_patience = patience
+        else:
+            running_patience -= 1
+        if running_patience == 0:
+            tqdm.write('Ran out of patience, early stopping employed!')
+            break
+    model.load_state_dict(torch.load(checkpoint))
+    return model
