@@ -15,7 +15,7 @@ For recurrent tasks, however, it does make sense to condition the gate value on 
 - Can handle either add/subtract or mult/div operations but not a combination of both.
 - For mult/div operations, it cannot handle negative targets as the mult/div gate output<br />
 is the result of an exponentiation operation which always yeilds positive results.
-- Power operations are possible when the exponent is in the range of [0, 1].
+- Power operations are only possible when the exponent is in the range of [0, 1].
 
 ## Advantages of using NALU
 - The careful design of the mathematics ensure the learnt weights allow for both<br />
