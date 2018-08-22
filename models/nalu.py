@@ -4,6 +4,11 @@ from models.nac import NAC
 
 
 class NALU(nn.Module):
+    '''
+    Class implementing Neural Arithmetic Logic Unit (NALU)
+    with a small deviation from the original one described
+    here: https://arxiv.org/abs/1808.00508
+    '''
     def __init__(self, in_dim, out_dim):
         super().__init__()
         self.in_dim = in_dim

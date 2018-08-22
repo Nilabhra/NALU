@@ -4,6 +4,10 @@ from torch.nn import functional as F
 
 
 class NAC(nn.Module):
+    '''
+    Class implementing Neural Accumulator (NAC)
+    as described in https://arxiv.org/abs/1808.00508
+    '''
     def __init__(self, in_dim, out_dim):
         super().__init__()
         self.in_dim = in_dim
