@@ -5,6 +5,9 @@ from tqdm import tqdm
 
 def get_batches(data, target, batch_size,
                 mode='test', use_gpu=False):
+    '''
+    Generator function to yield minibatches of data and targets
+    '''
     idx = np.arange(0, data.shape[0])
     
     if mode == 'train':
@@ -30,6 +33,10 @@ def get_batches(data, target, batch_size,
 
 def get_eval_loss(model, criterion, data,
                   targets, batch_size, use_gpu=False):
+    '''
+    Function to calculate loss on the validation and test set
+    detached from the compute graph
+    '''
     preds, targets = get_eval_preds(model, data, targets,
                                     batch_size, use_gpu)
     loss = criterion(preds, targets)
@@ -38,6 +45,10 @@ def get_eval_loss(model, criterion, data,
 
 def get_eval_preds(model, data, targets,
                    batch_size, use_gpu=False):
+    '''
+    Function to perfrom inference on validation and test set
+    detached from the compute graph
+    '''
     with torch.no_grad():
         model.eval()
         model_preds = []
@@ -54,6 +65,12 @@ def get_eval_preds(model, data, targets,
 def train(model, criterion, opt, train_data, train_targets,
           valid_data, valid_targets, patience=15, batch_size=32,
           num_epochs=10000, checkpoint='best_model.sav'):
+    '''
+    Function to train a model given a criterion, optimizer,
+    training and validation data. Early stopping using the validation
+    loss is used to terminat the training routine. The returned model
+    is loaded with the best set of weights found during training.
+    '''
     running_patience = patience
     running_batch = 0
     running_loss = 0
