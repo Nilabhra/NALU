@@ -66,10 +66,10 @@ def train(model, criterion, opt, train_data, train_targets,
           valid_data, valid_targets, patience=15, batch_size=32,
           num_epochs=10000, checkpoint='best_model.sav'):
     '''
-    Function to train a model given a criterion, optimizer,
-    training and validation data. Early stopping using the validation
-    loss is used to terminat the training routine. The returned model
-    is loaded with the best set of weights found during training.
+    Function to train a model given a criterion, optimizer, training
+    and validation data. Early stopping based on the validation loss
+    is used to terminate the training routine. The returned model is
+    loaded with the best set of weights found during training.
     '''
     running_patience = patience
     running_batch = 0
