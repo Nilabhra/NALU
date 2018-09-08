@@ -11,7 +11,7 @@ This implementation uses ![equation](http://latex.codecogs.com/gif.latex?%5Cfn_j
 
 For recurrent tasks, however, it does make sense to condition the gate value on the input.
 
-## Limitations of a single NALU
+## Limitations of a single cell NALU
 - Can handle either add/subtract or mult/div operations but not a combination of both.
 - For mult/div operations, it cannot handle negative targets as the mult/div gate output<br />
 is the result of an exponentiation operation which always yeilds positive results.
@@ -21,3 +21,6 @@ is the result of an exponentiation operation which always yeilds positive result
 - The careful design of the mathematics ensure the learnt weights allow for both<br />
 interpolation and extrapolation.
 
+## Note
+Power operations above the range of [0, 1] would need 2 NALU's stacked on top of each other.<br />
+The hidden dimentionality of the stacked NALU network will have to be greater than or equal to the exponent.
